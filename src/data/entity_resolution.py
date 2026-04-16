@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import math
 import re
 
 import numpy as np
@@ -82,38 +81,12 @@ class EntityResolver:
         tx = tx.merge(city_centroids, left_on="location", right_on="city", how="left")
         tx = tx.drop(columns=["city"], errors="ignore")
 
-        # Link location pings to users via biotag signature heuristics.
-        if "biotag_signature" in loc.columns and "sender_user_signature" in tx.columns:
-            pass
-        user_sig_col = "sender_user_signature"
-        if user_sig_col not in tx.columns and "sender_user_signature" not in tx.columns:
-            if "sender_user_signature" not in tx.columns and "sender_user_signature" in tx.columns:
-                user_sig_col = "sender_user_signature"
-
-        # Build sender user signature map from already attached user profile.
-        tx["sender_user_signature"] = tx.get("sender_user_signature", tx.get("sender_user_signature", pd.Series(dtype=str)))
-        if "sender_user_signature" not in tx.columns and "sender_user_signature" not in tx.columns:
-            tx["sender_user_signature"] = tx.get("sender_user_signature", pd.Series(dtype=str))
-        if "sender_user_signature" not in tx.columns and "sender_user_signature" not in tx.columns:
-            tx["sender_user_signature"] = tx.get("sender_user_signature", pd.Series(dtype=str))
-
-        # Fallback to user signature from sender profile.
-        if "sender_user_signature" not in tx.columns and "sender_user_signature" in tx.columns:
-            tx["sender_user_signature"] = tx["sender_user_signature"]
-        if "sender_user_signature" not in tx.columns and "sender_user_signature" not in tx.columns:
-            tx["sender_user_signature"] = tx.get("sender_user_signature", pd.Series(dtype=str))
-
-        # The sender profile column created by merge is sender_user_signature.
-        if "sender_user_signature" not in tx.columns and "sender_user_signature" in tx.columns:
-            tx["sender_user_signature"] = tx["sender_user_signature"]
-
-        # Normalize likely column names for downstream use.
-        if "sender_user_signature" not in tx.columns and "sender_user_signature" not in tx.columns:
-            tx["sender_user_signature"] = tx.get("sender_user_signature", pd.Series(dtype=str))
+        if "sender_user_signature" not in tx.columns:
+            tx["sender_user_signature"] = pd.Series(index=tx.index, dtype=str)
 
         tx["latest_gps_lat"] = np.nan
         tx["latest_gps_lng"] = np.nan
-        tx["latest_gps_timestamp"] = pd.NaT
+        tx["latest_gps_timestamp"] = pd.Series([pd.NaT] * len(tx), dtype="datetime64[ns, UTC]")
 
         if loc.empty:
             return tx
