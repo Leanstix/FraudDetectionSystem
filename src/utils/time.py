@@ -4,7 +4,7 @@ import pandas as pd
 
 
 def parse_datetime_series(series: pd.Series) -> pd.Series:
-    return pd.to_datetime(series, errors="coerce", utc=False)
+    return pd.to_datetime(series, errors="coerce", utc=True)
 
 
 def hours_between(later: pd.Timestamp, earlier: pd.Timestamp) -> float:
