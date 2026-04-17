@@ -85,12 +85,6 @@ No LLM mode:
 python -m src.main predict --input "Brave New World - train.zip" --output "outputs/brave_new_world_submission.txt" --no-llm
 ```
 
-If your zip is under hackTheCode, this also works:
-
-```bash
-python -m src.main predict --input "hackTheCode/Brave+New+World+-+train.zip" --output "outputs/brave_new_world_submission.txt"
-```
-
 ## Output Files
 
 - Submission: outputs/brave_new_world_submission.txt
